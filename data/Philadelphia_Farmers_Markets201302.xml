@@ -132,7 +132,7 @@ ADDRESS- Address of farmers’ markets
 
 OPERATOR- Operator of farmers’ markets
 
-ACCEPT_SNA- Accepts Supplemental Nutrition Assistance Program (SNAP) 
+ACCEPT_SNA- Accepts Supplemental Nutrition Assistance Program (SNAP)
 
 ACCEPT_FMN – Accepts Farmers' Market Nutrition Program
 
@@ -140,11 +140,11 @@ DISTRIBUTE- Distributes Food Bucks
 
 ONLY_REDEE- Only Redeem Food Bucks
 
-EBT_MACHIN- EBT machine at the market 
+EBT_MACHIN- EBT machine at the market
 
-DAY_TIME- Day and time of operation 
+DAY_TIME- Day and time of operation
 
-ZIP_CODE- Zip Code 
+ZIP_CODE- Zip Code
 </eaover></overview></eainfo>
 	<metainfo>
 		<metd>201302</metd>
