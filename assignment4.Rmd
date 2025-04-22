@@ -1,6 +1,15 @@
 ---
-title: 'MUSA 5000: Point Pattern Analysis'
+title: 'The Spatial Distribution of Farmers Markets in Philadelphia'
 author: "Zhanchao Yang, Haoyu Zhu, Kavana Raju"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document:
+    theme: flatly
+    highlight: tango
+    toc: true
+    toc_float: true
+    code_folding: hide
+    code_download: yes
+    mathjax: default
 ---
+# Introduction
