@@ -2,7 +2,7 @@
 title: 'The Spatial Distribution of Farmers Markets in Philadelphia'
 author: "Zhanchao Yang, Haoyu Zhu, Kavana Raju"
 date: "`r Sys.Date()`"
-output: 
+output:
   html_document:
     theme: flatly
     highlight: tango
@@ -68,7 +68,7 @@ market_pp <- ppp(x = market_coords[,1], y = market_coords[,2], window = philly_w
 nnd <- nndist.ppp(market_pp)
 
 # Average Observed Distance
-MeanObsDist <- mean(nnd)  
+MeanObsDist <- mean(nnd)
 
 # Average Expected Distance
 # The expected mean nearest neighbor distance under Complete Spatial Randomness (CSR).
@@ -121,11 +121,11 @@ ggplot(khat_df, aes(x = r)) +
     title = "Ripley's Estimated K-Function",
     color = "Legend"
   ) +
-theme_light() +   
+theme_light() +
 theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=6),
-        axis.text.y=element_text(size=6), 
+        axis.text.y=element_text(size=6),
         axis.title=element_text(size=8))
 ```
 ```{r}
@@ -141,7 +141,7 @@ if (!is.na(threshold_index)) {
 ```
 
 ```{r}
-Kenv <- spatstat.explore::envelope(market_pp,fun="Kest", rmax=28000, nsim=9, nrank=1) 
+Kenv <- spatstat.explore::envelope(market_pp,fun="Kest", rmax=28000, nsim=9, nrank=1)
 ```
 ```{r}
 Kenv_df <- data.frame(
@@ -161,11 +161,11 @@ ggplot(Kenv_df, aes(x = r)) +
     title = "Ripley's Khat with Confidence Envelopes",
     color = "Legend"
   ) +
-  theme_light() +   
+  theme_light() +
   theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=6),
-        axis.text.y=element_text(size=6), 
+        axis.text.y=element_text(size=6),
         axis.title=element_text(size=8))
 ```
 ```{r}
@@ -181,7 +181,7 @@ if (!is.na(first_below_index)) {
 ```
 
 ```{r}
-lhat <- Lest(market_pp, rmax=28000, correction="Ripley") 
+lhat <- Lest(market_pp, rmax=28000, correction="Ripley")
 
 lhat_df <- data.frame(
   r = lhat$r,                      # Distance values
@@ -198,11 +198,11 @@ ggplot(lhat_df, aes(x = r)) +
     title = "Ripley's Estimated L-Function",
     color = "Legend"
   ) +
-  theme_light() +   
+  theme_light() +
   theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=6),
-        axis.text.y=element_text(size=6), 
+        axis.text.y=element_text(size=6),
         axis.title=element_text(size=8))
 ```
 
@@ -230,17 +230,17 @@ ggplot(L2_df, aes(x = r)) +
     title = "Ripley's L-Function with Confidence Envelopes",
     color = "Legend"
   ) +
-  theme_light() +   
+  theme_light() +
   theme(plot.subtitle = element_text(size = 9,face = "italic"),
-        plot.title = element_text(size = 12, face = "bold"), 
+        plot.title = element_text(size = 12, face = "bold"),
         axis.text.x=element_text(size=6),
-        axis.text.y=element_text(size=6), 
+        axis.text.y=element_text(size=6),
         axis.title=element_text(size=8))
 ```
 ```{r}
 ggplot() +
   geom_sf(data = zipcode, aes(fill = Pop2000), color = "white") +
-   scale_fill_continuous(low = "#FAF9F6", high = "#c44536", name= "Population") + 
+   scale_fill_continuous(low = "#FAF9F6", high = "#c44536", name= "Population") +
   theme(
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
@@ -271,4 +271,3 @@ ggplot() +
     labs(
     title = "Farmers Markets and Median Household Income by Zip Code")
 ```
-
