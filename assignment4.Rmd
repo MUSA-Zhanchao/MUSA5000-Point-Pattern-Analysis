@@ -2,7 +2,7 @@
 title: 'The Spatial Distribution of Farmers Markets in Philadelphia'
 author: "Zhanchao Yang, Haoyu Zhu, Kavana Raju"
 date: "`r Sys.Date()`"
-output: 
+output:
   html_document:
     theme: flatly
     highlight: tango
@@ -12,4 +12,262 @@ output:
     code_download: yes
     mathjax: default
 ---
+```{r load packages, message=FALSE, warning=FALSE, include=FALSE}
+
+options(scipen=999)
+options(digits = 3)
+
+library(tidyverse)
+library(sf)
+library(here)
+library(kableExtra)
+library(patchwork)
+library(spatstat.explore)
+library(spatstat)
+library(proxy)
+```
+
+```{r, include=FALSE}
+market <- read_sf("data/Philadelphia_Farmers_Markets201302.shp")
+zipcode <- read_sf("data/Philadelphia_ZipCodes.shp")
+philly <- read_sf("data/Philadelphia.shp")
+```
+
+
 # Introduction
+
+
+# Methodology
+
+# Results
+
+```{r, message=FALSE, warning=FALSE}
+ggplot() +
+  geom_sf(data = philly, fill = "grey80") +
+  geom_sf(data = zipcode, fill = NA, color = "white") +
+  geom_sf(data = market, color = "#c44536", size = 1.5) +
+  theme(
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        plot.title = element_text(size = 12, face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(colour = "grey", fill=NA, size=0.4)
+        ) +
+  labs(title = "Farmers Markets in Philadelphia")
+```
+```{r, warning=FALSE, message=FALSE}
+philly_window <- as.owin(st_transform(philly, crs = st_crs(market)))
+market_coords <- st_coordinates(market)
+market_pp <- ppp(x = market_coords[,1], y = market_coords[,2], window = philly_window)
+```
+
+```{r}
+# Nearest neighbor analysis
+nnd <- nndist.ppp(market_pp)
+
+# Average Observed Distance
+MeanObsDist <- mean(nnd)
+
+# Average Expected Distance
+# The expected mean nearest neighbor distance under Complete Spatial Randomness (CSR).
+n <- npoints(market_pp)
+area <- area.owin(market_pp$window)
+MeanExpDist <- 0.5 / sqrt(n / area)
+
+#Standard Error
+SE <- 0.26136 / sqrt(n*n / area)
+```
+
+```{r}
+NNI <- MeanObsDist / MeanExpDist # Nearest Neighbor Index
+zscore <- (MeanObsDist - MeanExpDist)/SE  #Calculating the z-score
+pval<-ifelse(zscore > 0, 1 - pnorm(zscore), pnorm(zscore))  #Calculating the p-value
+
+results <- data.frame(
+  Metric = c("Nearest Neighbor Index (NNI)", "Z-Score", "P-Value"),
+  Value = c(round(NNI, 3), round(zscore, 3), round(pval, 7))
+)
+
+results %>%
+  kable("html", col.names = c("Metric", "Value")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+```{r}
+max.distance <- max(proxy::dist(
+  data.frame(cbind(x = market_coords[,1], y = market_coords[,2])),
+  data.frame(cbind(x = market_coords[,1], y = market_coords[,2])),
+  method = "euclidean"
+))
+
+cat("Maximum Distance:", max.distance, "\n")
+```
+
+```{r, message=FALSE, warning=FALSE}
+khat <-Kest(market_pp, rmax=28000, correction="Ripley")
+khat_df <- data.frame(
+  r = khat$r,             # Distance values
+  iso = khat$iso,         # Observed K(r) (isotropic)
+  theo = khat$theo        # Theoretical K(r)
+)
+
+ggplot(khat_df, aes(x = r)) +
+  geom_line(aes(y = iso, color = "Observed K(r)"), size = 2, color = "#197278") +
+  geom_line(aes(y = theo, color = "Theoretical K(r)"), linetype = "dashed", size = 1, color = "#c44536") +
+  labs(
+    x = "r (Distance)",
+    y = "Ripley's K-Function",
+    title = "Ripley's Estimated K-Function",
+    color = "Legend"
+  ) +
+theme_light() +
+theme(plot.subtitle = element_text(size = 9,face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.text.x=element_text(size=6),
+        axis.text.y=element_text(size=6),
+        axis.title=element_text(size=8))
+```
+```{r}
+khat_df$difference <- khat_df$iso - khat_df$theo
+threshold_index <- which(khat_df$difference > 0)[1]
+
+if (!is.na(threshold_index)) {
+  consistent_start <- khat_df$r[threshold_index]
+  message("The observed K(r) is consistently higher than the theoretical K(r) starting at r = ", consistent_start)
+} else {
+  message("The observed K(r) does not consistently exceed the theoretical K(r) within the given range.")
+}
+```
+
+```{r}
+Kenv <- spatstat.explore::envelope(market_pp,fun="Kest", rmax=28000, nsim=9, nrank=1)
+```
+```{r}
+Kenv_df <- data.frame(
+  r = Kenv$r,              # Distance values
+  obs = Kenv$obs,          # Observed K-function
+  lower = Kenv$lo,         # Lower envelope
+  upper = Kenv$hi          # Upper envelope
+)
+
+ggplot(Kenv_df, aes(x = r)) +
+  geom_line(aes(y = obs, color = "Observed K(r)"), size = 2, color = "#772e25") +
+  geom_line(aes(y = lower, color = "Lower Envelope"), linetype = "dashed", size = 1, color = "#197278") +
+  geom_line(aes(y = upper, color = "Upper Envelope"), linetype = "dashed", size = 1, color = "#c44536") +
+  labs(
+    x = "r (Distance)",
+    y = "Khat(r)",
+    title = "Ripley's Khat with Confidence Envelopes",
+    color = "Legend"
+  ) +
+  theme_light() +
+  theme(plot.subtitle = element_text(size = 9,face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.text.x=element_text(size=6),
+        axis.text.y=element_text(size=6),
+        axis.title=element_text(size=8))
+```
+```{r}
+Kenv_df$difference_lower <- Kenv_df$obs - Kenv_df$lower
+first_below_index <- which(Kenv_df$difference_lower < 0)[1]
+
+if (!is.na(first_below_index)) {
+  below_start <- Kenv_df$r[first_below_index]
+  message("The observed K(r) falls below the lower envelope starting at r = ", below_start)
+} else {
+  message("The observed K(r) does not fall below the lower envelope within the given range.")
+}
+```
+
+```{r}
+lhat <- Lest(market_pp, rmax=28000, correction="Ripley")
+
+lhat_df <- data.frame(
+  r = lhat$r,                      # Distance values
+  L_obs = lhat$iso - lhat$r,       # Observed L-function minus r
+  L_theo = lhat$theo - lhat$r      # Theoretical L-function minus r
+)
+
+ggplot(lhat_df, aes(x = r)) +
+  geom_line(aes(y = L_obs, color = "Observed L(r)"), size = 2, color = "#197278") +
+  geom_line(aes(y = L_theo, color = "Theoretical L(r)"), linetype = "dashed", size = 1, color = "#c44536") +
+  labs(
+    x = "r (Distance)",
+    y = "Ripley's L - r",
+    title = "Ripley's Estimated L-Function",
+    color = "Legend"
+  ) +
+  theme_light() +
+  theme(plot.subtitle = element_text(size = 9,face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.text.x=element_text(size=6),
+        axis.text.y=element_text(size=6),
+        axis.title=element_text(size=8))
+```
+
+```{r}
+Lenv <- spatstat.explore::envelope(market_pp,fun="Lest", rmax=28000, nsim=9,nrank=1)
+```
+
+```{r}
+L2 <- Lenv
+L2_df <- data.frame(
+  r = L2$r,                   # Distance values
+  obs = L2$obs - L2$r,        # Adjusted observed L-function
+  theo = L2$theo - L2$r,      # Adjusted theoretical L-function
+  lo = L2$lo - L2$r,          # Lower confidence envelope
+  hi = L2$hi - L2$r           # Upper confidence envelope
+)
+
+ggplot(L2_df, aes(x = r)) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "grey80", alpha = 0.5) +
+  geom_line(aes(y = obs, color = "Observed L(r)"), size = 2, color = "#197278") +
+  geom_line(aes(y = theo, color = "Theoretical L(r)"), linetype = "dashed", size = 1, color = "#c44536") +
+  labs(
+    x = "r (Distance)",
+    y = "L(r) - r",
+    title = "Ripley's L-Function with Confidence Envelopes",
+    color = "Legend"
+  ) +
+  theme_light() +
+  theme(plot.subtitle = element_text(size = 9,face = "italic"),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.text.x=element_text(size=6),
+        axis.text.y=element_text(size=6),
+        axis.title=element_text(size=8))
+```
+```{r}
+ggplot() +
+  geom_sf(data = zipcode, aes(fill = Pop2000), color = "white") +
+   scale_fill_continuous(low = "#FAF9F6", high = "#c44536", name= "Population") +
+  theme(
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        plot.title = element_text(size = 12, face = "bold"),
+        panel.background = element_blank(),
+        panel.border = element_rect(colour = "grey", fill=NA, size=0.4)
+        ) +
+  labs(title = "Philadelphia Population by Zip Code")
+```
+# Discussion
+
+```{r}
+ggplot() +
+  geom_sf(data = zipcode, aes(fill = MedIncome), color = "white") +
+  scale_fill_continuous(low = "#FAF9F6", high = "#197278", name = "Median Income") +
+    geom_sf(data = market, aes(), color = "#c44536", size = 2) +
+    theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.title = element_text(size = 12, face = "bold"),
+    panel.background = element_blank(),
+    panel.border = element_rect(colour = "grey", fill = NA, size = 0.4)
+  ) +
+    labs(
+    title = "Farmers Markets and Median Household Income by Zip Code")
+```
