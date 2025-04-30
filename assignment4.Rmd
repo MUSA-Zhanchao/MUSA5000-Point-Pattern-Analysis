@@ -36,6 +36,7 @@ philly <- read_sf("data/Philadelphia.shp")
 
 # Introduction
 
+Access to fresh and healthy food is a critical issues in many American cities. Lack of access to fresh food may lead to significant public health challenges and worsen health disparities. In Philadelphia, the Food Trust has established a network of farmers markets to improve access to fresh food. However, some neighborhoods may still face limited or no access to these markets, raising significant concerns about the potential food desert and access inequity. This study aims to analyze the spatial distribution of farmers markets in Philadelphia to determine whether they are randomly placed, clustered, or dispersed across the city. At the same time, the study also try to identify the areas lack of access to farmers markets and the potential food deserts.
 
 # Methodology
 
