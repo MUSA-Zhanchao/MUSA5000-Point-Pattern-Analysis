@@ -44,7 +44,7 @@ Access to fresh and healthy food is a critical issues in many American cities. L
 
 To set up the hypothesis for our analysis, first, we need to understand the concept of completely spatially random (CSR)
 
-### Completely Spatially Random (CSR) 
+### Completely Spatially Random (CSR)
 
 A point pattern is considered to be **Completely Spatially Random (CSR)** if the points are distributed without any discernible pattern, which means their placement is entirely random. CSR serves as a baseline model in spatial clustering analysis, allowing researchers determine whether a distribution is random or exhibits clustering or dispersion. It often used as a null hypothesis in point pattern analysis to assess deviations in spatial distributions.
 
