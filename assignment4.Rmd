@@ -44,7 +44,7 @@ Access to fresh and healthy food is a critical issues in many American cities. L
 
 To set up the hypothesis for our analysis, first, we need to understand the concept of completely spatially random (CSR)
 
-### Completely Spatially Random (CSR)
+### Completely Spatially Random (CSR) 
 
 A point pattern is considered to be **Completely Spatially Random (CSR)** if the points are distributed without any discernible pattern, which means their placement is entirely random. CSR serves as a baseline model in spatial clustering analysis, allowing researchers determine whether a distribution is random or exhibits clustering or dispersion. It often used as a null hypothesis in point pattern analysis to assess deviations in spatial distributions.
 
@@ -74,6 +74,8 @@ Clusterings occurs when points are concentrated in specific areas, reflecting an
 
 # Results
 
+After loading the data, we made a quick visualization of the farmers markets in Philadelphia to get a general sense of their spatial distribution. Based on the map showing below, we can see that the farmer's markets are not evenly distributed across the city. It appears to be clustered in certain areas. Northeastern and Southeastern Philadelphia appear to have less farmers' markets compared to other regions.
+
 ```{r, message=FALSE, warning=FALSE}
 ggplot() +
   geom_sf(data = philly, fill = "grey80") +
@@ -90,11 +92,22 @@ ggplot() +
         ) +
   labs(title = "Farmers Markets in Philadelphia")
 ```
+
+
+## Nearest Neighbor Analysis
+
+The nearest neighbor analysis is a statistical method used to assess the spatial distribution of points in a given area. It helps determine whether the points are randomly distributed, clustered, or dispersed. The analysis calculates the distance between each point and its nearest neighbor, providing insights into the spatial arrangement of the points.
+
+To conduct the nearest neighbor analysis, we first prepare the data by extracting the point coordinates of the farmers' markets and converting them into a `ppp` object. 
 ```{r, warning=FALSE, message=FALSE}
 philly_window <- as.owin(st_transform(philly, crs = st_crs(market)))
+
+# Extract point coordinates and convert to `ppp`
 market_coords <- st_coordinates(market)
 market_pp <- ppp(x = market_coords[,1], y = market_coords[,2], window = philly_window)
 ```
+
+After that, we calculate the nearest neighbor distances for each point and compare the observed mean distance to the expected mean distance under the assumption of complete spatial randomness (CSR). The Nearest Neighbor Index (NNI) is calculated as the ratio of the observed mean distance to the expected mean distance. A value of NNI less than 1 indicates clustering, while a value greater than 1 indicates dispersion. A value close to 1 suggests a randomness. We also calculate the z-score and p-value to assess the statistical significance of the observed distribution.
 
 ```{r}
 # Nearest neighbor analysis
@@ -112,6 +125,10 @@ MeanExpDist <- 0.5 / sqrt(n / area)
 #Standard Error
 SE <- 0.26136 / sqrt(n*n / area)
 ```
+
+According to the result shown below, the **Nearest Neighbor index (NNI) is 0.778**, which indicates that the farmers markets are clustered in certain areas. The **z-score is -3.345**, and the **p-value is 0.000**, suggesting that the observed pattern is statistically significant clustered. Since the p-value is less than 0.05, we can reject the null hypothesis of Completely Spatial Randomness (CSR) at given confidence level and conclude that the farmers markets in Philadelphia are not randomly distributed. Instead, they are clustered in certain areas. 
+
+## K function Analysis
 
 ```{r}
 NNI <- MeanObsDist / MeanExpDist # Nearest Neighbor Index
