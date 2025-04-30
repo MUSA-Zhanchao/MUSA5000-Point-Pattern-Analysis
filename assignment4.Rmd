@@ -72,6 +72,21 @@ Clusterings occurs when points are concentrated in specific areas, reflecting an
 
 ## The Quadrant Test
 
+The Quadrant method is a typical spatial analysis techniques used to study the distribution of points within a defined area. It involves dividing the study area into quadrats (small, equally sized square cells). The number of points in each quadrant is then counted and analyzed to determine whether the points are randomly distributed, clustered, or dispersed. The counts are used to compute statistical measures, such as the variance-to-mean ratio such that if VMR is close to 1, the points are randomly distributed. If VMR is significantly greater than 1, the points are clustered, and if VMR is significantly less than 1, the points are dispersed.
+
+While this method is simple and widely used for basic spatial pattern analysis, it has several limitations that make it less practical for more detailed or complex analyses:
+
+- **Sensitivity to cell size**: The choice of cell size greatly influences the results, as smaller cells may highlight variability and create many empty quadrats, while larger cells can obscure detailed patterns. This variability can lead to inconsistent results and make it difficult to draw meaningful conclusions.
+- **Dependence on grid orientation and range**;  Slight changes in how the grid is placed over the study area or adjustments to the boundaries of analysis can result in different results, even when the underlying spatial pattern remains unchanged. This can lead to a lack of reproducibility and make it challenging to compare results across different studies or analyses.
+- **Simplifies spatial data**: the quadrat method simplifies spatial data by converting the spatial distribution of points into counts within cells. This aggregation often leads to loss of detailed spatial information. For instance, two distinct patterns, such as clustering and dispersion, may yield similar counts in quadrants, which limits the method's ability to distinguish between these patterns effectively.
+- **Suffers from Modifiable Areal Unit Problem (MAUP)**: The choice of how the space divided into quadrats influence the results. This division can introduce bias and reduce the reliability of the analysis.
+
+Combined with all these limitations, the quadrat method may not be suitable for more complex spatial patterns or when detailed spatial information is required. More advanced methods, such as Ripley's K-function or nearest neighbor analysis, are often preferred for analyzing point patterns in spatial data.
+
+## The Nearest Neighbor Analysis
+
+## K Function Analysis
+
 # Results
 
 After loading the data, we made a quick visualization of the farmers markets in Philadelphia to get a general sense of their spatial distribution. Based on the map showing below, we can see that the farmer's markets are not evenly distributed across the city. It appears to be clustered in certain areas. Northeastern and Southeastern Philadelphia appear to have less farmers' markets compared to other regions.
