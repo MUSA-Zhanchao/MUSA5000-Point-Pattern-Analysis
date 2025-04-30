@@ -40,6 +40,38 @@ Access to fresh and healthy food is a critical issues in many American cities. L
 
 # Methodology
 
+## Hypothesis Testing
+
+To set up the hypothesis for our analysis, first, we need to understand the concept of completely spatially random (CSR)
+
+### Completely Spatially Random (CSR) 
+
+A point pattern is considered to be **Completely Spatially Random (CSR)** if the points are distributed without any discernible pattern, which means their placement is entirely random. CSR serves as a baseline model in spatial clustering analysis, allowing researchers determine whether a distribution is random or exhibits clustering or dispersion. It often used as a null hypothesis in point pattern analysis to assess deviations in spatial distributions.
+
+To establish that a point pattern is CSR, two critical conditions must be met:
+
+- **Equal probability of placement**: the probability of a point landing in any location within the study area must be directly proportional to the size of that location. This means that larger areas should have a higher likelihood of containing points, while smaller areas should have a lower likelihood. If the areas are divided into equal-size cells, each cell should have an equal likelihood of containing a point. For instance, if a region is divided into 60 cells of equal area, the probability of a point being in any one cell should be 1/60.
+- **independence of points**: the placement of points must be independent of one another. This means that the presence of one point does not influence the likelihood of another point being placed nearby. In other words, the location of one point has no influence on where other points land, ensuring that no clustering or repulsion occurs.
+
+Together, these two conditions, **equal probability of placement** and **independence of points**, ensure that the point pattern is completely random. If either condition is violated, the point pattern may exhibit clustering or dispersion, indicating that the points are not randomly distributed.
+
+### Null hypothesis & Alternative hypothesis
+
+For our point pattern analysis, the null hypothesis $H_0$ is shown as followed:
+
+$$
+H_0: \text{The point pattern of farmer's market in Philadelphia follows completely spatially random.}
+$$
+This implies that points are equally likely distributed anywhere within the study area, with no preference for specific locations. In addition, the placement of one point does not influence the placement of other points. CSR assumes no clustering or systematic spacing between points, which is the default or baseline spatial distribution.
+
+On the other hand, the alternative hypothesis $H_a$ is:
+$$
+H_a: \text{The point pattern of farmer's market in Philadelphia exhibits clustering or dispersion.}
+$$
+Clusterings occurs when points are concentrated in specific areas, reflecting an underlying attraction between points, such as hotspots of activity. Dispersion, on the other hand, occurs when points are evenly spaced apart, indicating a repulsion effect or avoidance behavior. In this case, the point pattern does not follow CSR.
+
+## The Quadrant Test
+
 # Results
 
 ```{r, message=FALSE, warning=FALSE}
