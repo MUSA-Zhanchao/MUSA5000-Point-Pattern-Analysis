@@ -72,7 +72,7 @@ Clusterings occurs when points are concentrated in specific areas, reflecting an
 
 ## The Quadrant Test
 
-The Quadrant method is a typical spatial analysis techniques used to study the distribution of points within a defined area. It involves dividing the study area into quadrats (small, equally sized square cells). The number of points in each quadrant is then counted and analyzed to determine whether the points are randomly distributed, clustered, or dispersed. The counts are used to compute statistical measures, such as the variance-to-mean ratio such that if VMR is close to 1, the points are randomly distributed. If VMR is significantly greater than 1, the points are clustered, and if VMR is significantly less than 1, the points are dispersed.
+The Quadrant method is a typical spatial analysis technique used to study the distribution of points within a defined area. It involves dividing the study area into quadrats (small, equally sized square cells). The number of points in each quadrant is then counted and analyzed to determine whether the points are randomly distributed, clustered, or dispersed. The counts are used to compute statistical measures, such as the variance-to-mean ratio such that if VMR is close to 1, the points are randomly distributed. If VMR is significantly greater than 1, the points are clustered, and if VMR is significantly less than 1, the points are dispersed.
 
 While this method is simple and widely used for basic spatial pattern analysis, it has several limitations that make it less practical for more detailed or complex analyses:
 
@@ -85,7 +85,165 @@ Combined with all these limitations, the quadrat method may not be suitable for 
 
 ## The Nearest Neighbor Analysis
 
+The **Nearest Neighbor Analysis (NNA)** is another spatial statistical technique used to assess whether the distribution of point features in a given area exhibits clustering, randomness, or regular dispersion. It does so by comparing the **observed average distance** between each point and its **nearest neighbor** to the **expected average distance** under a completely spatially random (CSR) pattern.
+
+To be more mathematical, the **Observed Average Distance** is \( \bar{D}_O \), representing the **mean distance from each point to its closest neighboring point** in the observed dataset and can be calculated as:
+
+$$
+\bar{D}_O = \frac{\sum_{i=1}^{n} D_i}{n}
+$$
+
+Where:  
+- \( D_i \) = distance between feature *i* and its nearest neighbor  
+- *n* = total number of features (points)  
+
+The **Expected Average Distance** is \( \bar{D}_E \), representing the average nearest neighbor distance that would be expected **if the points were randomly distributed** across the area and can be calculated by:
+
+$$
+\bar{D}_E = \frac{0.5}{\sqrt{n / A}}
+$$
+
+Where:  
+- *n* = total number of features (points)  
+- *A* = area of the study region  
+
+The **Nearest Neighbor Index (NNI)** is defined as the ratio of the observed average nearest neighbor distance to the expected average distance under a random distribution:
+
+$$
+NNI = \frac{\text{Observed Average Distance}}{\text{Expected Average Distance (when pattern is random)}} = \frac{\bar{D}_O}{\bar{D}_E}
+$$
+
+Where:  
+- \( \bar{D}_O \) = observed average distance between each point and its nearest neighbor  
+- \( \bar{D}_E \) = expected average distance under complete spatial randomness (CSR)  
+
+
+When the **Nearest Neighbor Index (NNI)** is approximately equal to 1, it suggests that the distribution of points is **random**, indicating the observed average distance is similar to what would be expected under a completely spatially random pattern. If **NNI < 1**, the point pattern is suggested as **clustered**, indicating points are closer together than would be expected by chance.If **NNI > 1**, the distribution is suggested as **dispersed**, indicating points are more widely spaced than expected under randomness. 
+
+More specifically, when **NNI ≈ 0**, it indicates that all points are concentrated at the same location (i.e., the observed average distance is zero), reflecting a highly clustered spatial pattern. When **NNI = 1**, the observed and expected average distances are equal, indicating a random spatial pattern. When **NNI = 2.149**, the index reaches its theoretical maximum, indicating a perfectly uniform point distribution, such as one following a **hexagonal lattice pattern**.
+
+In this report, the study area is defined as the administrative boundary of the city of Philadelphia, specifically using the 2013 ZIP code-level shapefile of Philadelphia. The spatial analysis of farmers market distribution is conducted within this defined geographic boundary. All distance and spatial statistics are calculated based on the locations of farmers markets within these Philadelphia ZIP code boundaries.
+
+### Statistical Test for the Nearest Neighbor Analysis
+
+The significance of the Nearest Neighbor Index (NNI) is determined by a hypothesis test based on the **standard normal (z) distribution**. The hypotheses are as follows:
+
+- **Null Hypothesis (H₀):** The observed point pattern is random, which means it is not significantly different from the expected point pattern.
+- **Alternative Hypothesis (Hₐ):** The observed point pattern is not random, indicating either significant clustering or dispersion.
+
+The z-score from the standard normal distribution is calculated as:
+
+$$
+z = \frac{𝑑̅ₒ - 𝑑̅ₑ}{SE}
+$$
+
+Where:
+
+- \(𝑑̅ₒ = \frac{1}{n} \sum_{i=1}^{n} D_i\): the average observed nearest neighbor distance  
+- \(𝑑̅ₑ = \frac{0.5}{\sqrt{n / A}}\): the expected average nearest neighbor distance under complete spatial randomness, where \(n\) is the number of points and \(A\) is the area of the study region  
+- \(SE = \frac{0.26136}{\sqrt{n^2 / A}}\): the standard error of \(𝑑̅ₒ\)
+
+This is a **two-tailed test**, since the alternative hypothesis considers both clustering and dispersion. A z-score of \(|1.96|\) corresponds to an α-value of 0.05. If \( z > 1.96 \), we reject \(H₀\) for \(Hₐ\), indicating **significant dispersion**, which is points are more spread out than expected under randomness; If \( z < -1.96 \), we also reject \(H₀\) for \(Hₐ\), but this time indicating **significant clustering**, which is points are more tightly packed than expected. If \( -1.96 \leq z \leq 1.96 \), we **fail to reject** \(H₀\), indicating that the observed point pattern is not significantly different from a random distribution.
+
+## Limitation of the Nearest Neighbor Analysis
+
+While Nearest Neighbor Analysis (NNA) is a useful method for detecting point patterns, it has several important limitations, especially in complex urban environments or irregularly shaped study areas.
+
+### Assumption of Regular Boundaries
+
+A major limitation of NNA is that it typically assumes a **rectangular study area**, regardless of the actual shape of the region. For example, in the case of hospital locations in Philadelphia, the hospitals are **clustered in Center City**. However, because the tool uses a smaller rectangular bounding box rather than the actual city outline, the calculated area was smaller than the actual distribution area, which is primarily concentrated in Center City. This underestimation of the study area **decreased the expected average distance** \( \bar{d}_e \), leading to a false conclusion of randomness, even though the clustering in the city center was visually evident. This example highlights how misrepresenting the true shape of the study area can result in inaccurate or misleading conclusions.
+
+**Edge Effects**
+
+Another common issue is **edge effects**. Points located near the boundaries may have their nearest neighbors just **outside** the study area, but these are **not considered** in the analysis. This omission can result in **overestimated nearest neighbor distances**, which in turn distorts the z-score and test conclusions, particularly in dense urban areas.
+
+**Assumption of Homogeneity**
+
+NNA also assumes that the entire study area is **homogeneous**, meaning points can occur **anywhere with equal probability**. However, this is rarely true in real-world contexts. For example, hospitals are more likely to be located near population centers, not distributed evenly across a region. If we ignore these constraints, NNA might wrongly interpret such spatial organization as clustering.
+
+**Scale Sensitivity**
+
+NNA is **sensitive to scale** because it only considers the **nearest neighbor distance**. It fails to capture more **complex spatial structures**, like clustering at small scales but dispersion at larger scales. For exemple, bees are **clustered within hives** (small-scale), while **hives are dispersed** (large-scale). NNA would detect only the clustering of bees, missing the broader-scale dispersion.
+
+Given these limitations, other spatial analysis techniques Ripley’s K-function are needed, which allow for a better understanding of spatial phenomena, especially when dealing with real-world, heterogeneous environments.
+
 ## K Function Analysis
+
+Ripley’s K-function is another spatial statistic for analyzing spatial point patterns. The K-function represents the mean number of points observed within a circle of radius \(d\), standardized by the overall point density in the study area. It firstly draws a circle of radius \(d\) for each point \(s_i\) in the dataset. Then, it calculates the number of other points (events) within each circle and compute the average number of points inside all these circles which reflecting the number of points around a typical event at a given radius \(d\). The K-function \(K(d)\) is then calculated by dividing the average count of points by the overall point density in the study region. The formula for this calculation is:
+
+$$
+K(d) = \frac{\frac{1}{n} \sum_{i=1}^{n} \#\left[S \in \text{Circle}(s_i, d)\right]}{\frac{n}{a}} = \frac{\text{Mean number of points in all circles of radius } d}{\text{Mean point density in entire study region } a}
+$$
+
+Where 
+- \( n \) is the total number of points in the dataset  
+- \( a \) is the area of the study region  
+- \( d \) is the search radius (distance threshold)  
+- \( S \) denotes the set of all points in the dataset  
+- \( \text{Circle}(s_i, d) \) is the circle of radius \( d \) centered at point \( s_i \)
+
+Under a random spatial process (CSR), the expected value of the K-function is \(K(d) = \pi d^2\), which is simply the area of a circle with radius \(d\). If the observed value of \(K(d)\) is greater than \(\pi d^2\), it indicates clustering at scale \(d\). If the observed value is less than \(\pi d^2\), it indicates dispersion at that scale.
+
+### L-function
+
+For ease of interpretation, the K-function is often transformed into the **L-function**, which is defined as:
+
+$$
+L(d) = \sqrt{\frac{K(d)}{\pi}} - d
+$$
+
+Under a random spatial process (CSR), the expected value of \(L(d)\) is 0, because when \(K(d) = \pi d^2\), we get:
+
+$$
+L(d) = \sqrt{\frac{\pi d^2}{\pi}} - d = d - d = 0
+$$
+
+When \(L(d)\) is greater than 0, it indicates clustering at scale \(d\). When \(L(d)\) is less than 0, it indicates dispersion at scale \(d\).
+
+In sArcGIS, the L-function is defined slightly differently, which is just as:
+
+$$
+L(d) = \sqrt{\frac{\text{Mean point density at each radius } d}{\text{Mean point density in entire area } a} \cdot \frac{1}{\pi}} = \sqrt{\frac{K(d)}{\pi}}
+$$
+
+### Beginning and Incremental Distances
+
+In K-function analysis, the first step is to define the initial distance \(d_0\), which represents the smallest distance for evaluating spatial relationships. The next step is to define a sequence of incremental distances, usually set at equal intervals (e.g., 10 meters, 20 meters, 50 meters). These incremental distances represent the various spatial scales at which clustering or dispersion might occur. **Beginning distance** is typically set to 0, representing the starting point of spatial interaction. **Incremental distance** determines how frequently the K-function is evaluated. Common choices for the **number of distance bands** are **10** or **20**, depending on the scale and resolution desired. In **R**, the `r` argument in the `spatstat` package allows us to specify a vector of distances at which the K-function should be evaluated. The manual advises against overriding the default unless there is a good reason, as “there is a sensible default.”
+In K-function analysis, it is important to define both the **beginning distance** and the **incremental distance** to evaluate spatial relationships across multiple scales. The **beginning distance** \( d_0 \) typically starts at 0, representing the minimum distance at which spatial interaction is measured. The **incremental distance** determines the step size between successive evaluations of the K-function, which is frequently used numbers like 10 or 20. These values define the range and resolution of the spatial analysis. Although we can specify a custom vector of distances in R, the manual advises against doing so unless there's a specific reason because **there is a sensible default**. 
+
+The **maximum distance** at which the K-functions should be evaluated can also be specifies in R, which should be approximately **one-half of the maximum pairwise distance** between points in your dataset. Rounding to a convenient value (e.g., 1400 or 1500 instead of 1437) is acceptable for clarity and consistency. Based on the maximum distance, The formula for calculating the **incremental distance** is:
+
+$$
+\text{Increment} = \frac{\frac{1}{2} \cdot \text{Maximum Pairwise Distance}}{\text{Number of Distance Bands}}
+$$
+
+### Testing Procedure and Confidence Envelopes
+
+In K-function or L-function analysis, the goal is to determine whether the observed point pattern significantly deviates from a random pattern (Complete Spatial Randomness, CSR) at various spatial scales. The hypotheses are formulated as follows:
+
+- **Null Hypothesis (H₀)**: At distance \(d\), the point pattern follows Complete Spatial Randomness (CSR).
+- **Alternative Hypothesis (Ha₁)**: At distance \(d\), the point pattern is clustered, meaning points are closer together than expected under CSR.
+- **Alternative Hypothesis (Ha₂)**: At distance \(d\), the point pattern is uniform, meaning points are more evenly spaced than expected under CSR.
+
+The testing procedure compares the observed values with those generated under the null hypothesis (H₀). To generate random patterns, we assume a point pattern with \(n\) points in the study area. Then, we generate several random point patterns (e.g., 9, 99, or 999) with \(n\) points each, assuming CSR. For each random pattern, we calculate the L-function \(L(d)\) at different distances \(d\) using the formula provided earlier. For each distance \(d\), we calculate the **Lower Envelope** (\(L^-(d)\)) and **Upper Envelope** (\(L^+(d)\)) based on the distribution of \(L(d)\) values from the random patterns. The **Lower Envelope** (\(L^-(d)\)) is the minimum value of \(L(d)\) observed across the random patterns. The **Upper Envelope** (\(L^+(d)\)) is the maximum value of \(L(d)\) observed across the random patterns.
+
+Next, we compare the observed pattern with the random patterns. For each distance \(d\), we compare the observed value of \(L(d)\) (denoted \(L_{\text{obs}}(d)\)) with the lower and upper envelopes (\(L^-(d)\) and \(L^+(d)\)). If \(L^-(d) \leq L_{\text{obs}}(d) \leq L^+(d)\), we **cannot reject** the null hypothesis \(H₀\), meaning that the pattern is not significantly different from CSR at distance \(d\). If \(L_{\text{obs}}(d) > L^+(d)\), we **reject** \(H₀\) in favor of \(Ha₁\), indicating **significant clustering** at scale \(d\). If \(L_{\text{obs}}(d) < L^-(d)\), we **reject** \(H₀\) in favor of \(Ha₂\), indicating **significant dispersion** at scale \(d\).
+
+### Points Next to the Border and Edge Corrections
+
+When analyzing point patterns, points located near the boundary of the study area can present challenges. If we draw a circle of radius \(d\) around this point, about part of the circle will be outside the study area, meaning no other points can fall in that region. In contrast, for a point located entirely within the study area, the circle is fully contained within the study area, and theoretically, other points could be anywhere inside it. This difference between points near the boundary and those inside the area could lead to biased analysis.
+
+To address this issue, **Ripley’s Edge Correction** is commonly applied. When a point is close to the boundary, Ripley's Edge Correction compensates for the missing points outside the study area by adjusting the weight of points based on their proximity to the boundary. It checks each point’s distance from the study area boundary and adjusts the weight of its neighbors accordingly. This method works well in rectangular study regions but does not apply to irregular shapes.
+
+Another edge correction method is the **Simulate Outer Boundary Values Correction**. This method mirrors points across the study area boundary to correct for underestimates near the edges. Points within a distance equal to the maximum distance band of the boundary are mirrored across the edge. These mirrored points are then used to provide more accurate neighbor estimates for points near the boundary.
+
+In our report, **Simulate Outer Boundary Values** is been used because the boundary of our study area, Philadelphia, is not rectangular.
+
+### Nonhomogeneous K-Functions
+
+In real-world spatial data, the assumption that points are evenly distributed over the study area may not hold. Factors such as population density, resource availability, or land use regulations can result in a **nonhomogeneous distribution of points**. In these cases, **nonhomogeneous K-functions** can be used, which take it into account to adjust the expected values of the K-function. For example, hospitals often cluster in densely populated areas. If we ignore population distribution and apply a homogeneous K-function, we may incorrectly interpret this natural concentration as spatial clustering. To make a fair comparison, we must account for the background population pattern, which serves as a **reference measure** guiding where points should be more or less likely to occur.
+
+To incorporate a reference measure into the K-function analysis, we modify the way we generate random point patterns for comparison. We firstly transform the reference measure data into **probabilities**, where each area’s probability is proportional value to the value of whole study area. Then, these probabilities are used to generate **spatially weighted random points**, meaning denser areas will be more likely to receive more points. Next, converting the probabilities shapefile into a raster surface, so each pixel carries a value representing the probability of a point falling there. Using this raster, we can generate multiple (e.g., 9, 99, or 999) **random point patterns** based on this weighted surface. Finally, we calculate the **L(d)** function for each of these simulated patterns and compare them to the observed point pattern.
 
 # Results
 
