@@ -94,8 +94,8 @@ $$
 $$
 
 Where:  
-- \( D_i \) = distance between feature *i* and its nearest neighbor  
-- *n* = total number of features (points)  
+- \( D_i \) is the distance between feature *i* and its nearest neighbor  
+- *n* is the total number of features (points)  
 
 The **Expected Average Distance** is \( \bar{D}_E \), representing the average nearest neighbor distance that would be expected **if the points were randomly distributed** across the area and can be calculated by:
 
@@ -104,8 +104,8 @@ $$
 $$
 
 Where:  
-- *n* = total number of features (points)  
-- *A* = area of the study region  
+- *n* is the total number of features (points)  
+- *A* is the area of the study region  
 
 The **Nearest Neighbor Index (NNI)** is defined as the ratio of the observed average nearest neighbor distance to the expected average distance under a random distribution:
 
@@ -114,8 +114,8 @@ NNI = \frac{\text{Observed Average Distance}}{\text{Expected Average Distance (w
 $$
 
 Where:  
-- \( \bar{D}_O \) = observed average distance between each point and its nearest neighbor  
-- \( \bar{D}_E \) = expected average distance under complete spatial randomness (CSR)  
+- \( \bar{D}_O \) is the observed average distance between each point and its nearest neighbor  
+- \( \bar{D}_E \) is the expected average distance under complete spatial randomness (CSR)  
 
 
 When the **Nearest Neighbor Index (NNI)** is approximately equal to 1, it suggests that the distribution of points is **random**, indicating the observed average distance is similar to what would be expected under a completely spatially random pattern. If **NNI < 1**, the point pattern is suggested as **clustered**, indicating points are closer together than would be expected by chance.If **NNI > 1**, the distribution is suggested as **dispersed**, indicating points are more widely spaced than expected under randomness. 
