@@ -301,8 +301,6 @@ SE <- 0.26136 / sqrt(n*n / area)
 
 According to the result shown below, the **Nearest Neighbor index (NNI) is 0.778**, which indicates that the farmers markets are clustered in certain areas. The **z-score is -3.345**, and the **p-value is 0.000**, suggesting that the observed pattern is statistically significant clustered. Since the p-value is less than 0.05, we can reject the null hypothesis of Completely Spatial Randomness (CSR) at given confidence level and conclude that the farmers markets in Philadelphia are not randomly distributed. Instead, they are clustered in certain areas.
 
-## K function Analysis
-
 ```{r}
 NNI <- MeanObsDist / MeanExpDist # Nearest Neighbor Index
 zscore <- (MeanObsDist - MeanExpDist)/SE  #Calculating the z-score
@@ -317,6 +315,13 @@ results %>%
   kable("html", col.names = c("Metric", "Value")) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
+
+## K function Analysis
+
+### Maximum Distance
+
+To conduct the K-function analysis, we first need to prepare the data by calculating the maximum Euclidean distance between points in the dataset. In other words, we would find two points farthest apart from one another and divide that distance by 2. This value will be used as the maximum distance for the K-function analysis.
+
 ```{r}
 max.distance <- max(proxy::dist(
   data.frame(cbind(x = market_coords[,1], y = market_coords[,2])),
@@ -326,6 +331,10 @@ max.distance <- max(proxy::dist(
 
 cat("Maximum Distance:", max.distance, "\n")
 ```
+
+### Ripley's K-function
+
+The plots below show the **Ripley's K-function**. The observed $K(d)$ in solid line and the theoretical $K(d)$ in dashed line under the null hypothesis of Complete Spatial Randomness (CSR). The observed $K(d)$ is significantly higher than the theoretical $K(d)$, beginning at 54 feet. This suggests that the points are more concentrated than expected under CSR, indicating clustering. Since the gap between the observed and theoretical $K(d)$ is increases with distance, we can coustering is more pronounced at larger distances. 
 
 ```{r, message=FALSE, warning=FALSE}
 khat <-Kest(market_pp, rmax=28000, correction="Ripley")
@@ -363,10 +372,13 @@ if (!is.na(threshold_index)) {
 }
 ```
 
-```{r}
+### Ripley's K-function Confidence Envelopes
+
+We also plot the **Ripley's K-function with Confidence Envelopes** to assess the statistical significant of the observed pattern. The confidence envelopes represented the range of values expected under Complete Spatial Randomness (CSR). The observed K-function is shown in solid line, while the lower and upper envelopes are shown in dashed lines. The observed K-function falls outside above the confidence envelopes, indicating that the observed pattern is significantly different from CSR. We can conclude that the pattern is significantly clustered at distances beyond this threshold.
+
+```{r, message=FALSE, warning=FALSE}
 Kenv <- spatstat.explore::envelope(market_pp,fun="Kest", rmax=28000, nsim=9, nrank=1)
-```
-```{r}
+
 Kenv_df <- data.frame(
   r = Kenv$r,              # Distance values
   obs = Kenv$obs,          # Observed K-function
@@ -391,6 +403,7 @@ ggplot(Kenv_df, aes(x = r)) +
         axis.text.y=element_text(size=6),
         axis.title=element_text(size=8))
 ```
+
 ```{r}
 Kenv_df$difference_lower <- Kenv_df$obs - Kenv_df$lower
 first_below_index <- which(Kenv_df$difference_lower < 0)[1]
@@ -402,6 +415,12 @@ if (!is.na(first_below_index)) {
   message("The observed K(r) does not fall below the lower envelope within the given range.")
 }
 ```
+
+### Ripley's L-function
+
+Then. we proceed to plot the **Ripley's L-function**, as it linearizes the K-function for easier interpretation. As shown below, we see that the observed $L(r) - r$ values are always greater than 0. This indicates that the observed number of points within a distance $r$ is higher than what is expected under the null hypothesis of Complete Spatial Randomness (CSR). 
+
+Since the magnitude of $L(r)- r$ reflects the degree of clustering with larger values suggest strong clustering, the plot implies that degree of clustering first increased and then decreased as distance increased. This suggests that farmers' markets in Philadelphia are clustered at smaller distances but outcome more dispersed at larger distances. 
 
 ```{r}
 lhat <- Lest(market_pp, rmax=28000, correction="Ripley")
@@ -429,11 +448,13 @@ ggplot(lhat_df, aes(x = r)) +
         axis.title=element_text(size=8))
 ```
 
-```{r}
-Lenv <- spatstat.explore::envelope(market_pp,fun="Lest", rmax=28000, nsim=9,nrank=1)
-```
+### Ripley's L-function Confidence Envelopes
 
-```{r}
+The final plot shows **Ripley's L-function with Confidence Envelopes**. The observed $L(r) - r$ are consitently above the upper confidence envelope (shaded region) across all distances, indicating that the observed points are more clustered than expected under Complete Spatial Randomness (CSR). 
+
+```{r, message=FALSE, warning=FALSE}
+Lenv <- spatstat.explore::envelope(market_pp,fun="Lest", rmax=28000, nsim=9,nrank=1)
+
 L2 <- Lenv
 L2_df <- data.frame(
   r = L2$r,                   # Distance values
@@ -463,7 +484,7 @@ ggplot(L2_df, aes(x = r)) +
 ```{r}
 ggplot() +
   geom_sf(data = zipcode, aes(fill = Pop2000), color = "white") +
-   scale_fill_continuous(low = "#FAF9F6", high = "#c44536", name= "Population") +
+   scale_fill_continuous(low = "#e9edc9", high = "#344e41", name= "Population") +
   theme(
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
@@ -475,7 +496,11 @@ ggplot() +
         ) +
   labs(title = "Philadelphia Population by Zip Code")
 ```
+
+Without conducting the analyses, we suspect that the absence of farmers markets in Northeastern Phildelphia nad South Philadelphia could be due to low population density in those census tract. If the population sparse, there may be less demand or fewer opportunties for farmers' markets to attract enough customer. In this came, inhomogeneous K-function analysis would be a more valuable tool. Unlike the homogeneous K-function, which assumes a uniform distribution of points across the study area, the inhomogeneous K-function accounts for variations in point density. This allows us to assess clustering or dispersion while considering the underlying population distribution. By incorporating population density as a reference measure, we can better understand how farmers' markets are distributed relative to the population and identify areas where they may be lacking.
+
 # Discussion
+
 
 ```{r}
 ggplot() +
