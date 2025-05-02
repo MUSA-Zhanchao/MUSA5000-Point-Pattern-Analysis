@@ -93,9 +93,9 @@ $$
 \bar{D}_O = \frac{\sum_{i=1}^{n} D_i}{n}
 $$
 
-Where:  
-- \( D_i \) is the distance between feature *i* and its nearest neighbor  
-- *n* is the total number of features (points)  
+Where:
+- \( D_i \) is the distance between feature *i* and its nearest neighbor
+- *n* is the total number of features (points)
 
 The **Expected Average Distance** is \( \bar{D}_E \), representing the average nearest neighbor distance that would be expected **if the points were randomly distributed** across the area and can be calculated by:
 
@@ -103,9 +103,9 @@ $$
 \bar{D}_E = \frac{0.5}{\sqrt{n / A}}
 $$
 
-Where:  
-- *n* is the total number of features (points)  
-- *A* is the area of the study region  
+Where:
+- *n* is the total number of features (points)
+- *A* is the area of the study region
 
 The **Nearest Neighbor Index (NNI)** is defined as the ratio of the observed average nearest neighbor distance to the expected average distance under a random distribution:
 
@@ -113,12 +113,12 @@ $$
 NNI = \frac{\text{Observed Average Distance}}{\text{Expected Average Distance (when pattern is random)}} = \frac{\bar{D}_O}{\bar{D}_E}
 $$
 
-Where:  
-- \( \bar{D}_O \) is the observed average distance between each point and its nearest neighbor  
-- \( \bar{D}_E \) is the expected average distance under complete spatial randomness (CSR)  
+Where:
+- \( \bar{D}_O \) is the observed average distance between each point and its nearest neighbor
+- \( \bar{D}_E \) is the expected average distance under complete spatial randomness (CSR)
 
 
-When the **Nearest Neighbor Index (NNI)** is approximately equal to 1, it suggests that the distribution of points is **random**, indicating the observed average distance is similar to what would be expected under a completely spatially random pattern. If **NNI < 1**, the point pattern is suggested as **clustered**, indicating points are closer together than would be expected by chance.If **NNI > 1**, the distribution is suggested as **dispersed**, indicating points are more widely spaced than expected under randomness. 
+When the **Nearest Neighbor Index (NNI)** is approximately equal to 1, it suggests that the distribution of points is **random**, indicating the observed average distance is similar to what would be expected under a completely spatially random pattern. If **NNI < 1**, the point pattern is suggested as **clustered**, indicating points are closer together than would be expected by chance.If **NNI > 1**, the distribution is suggested as **dispersed**, indicating points are more widely spaced than expected under randomness.
 
 More specifically, when **NNI ≈ 0**, it indicates that all points are concentrated at the same location (i.e., the observed average distance is zero), reflecting a highly clustered spatial pattern. When **NNI = 1**, the observed and expected average distances are equal, indicating a random spatial pattern. When **NNI = 2.149**, the index reaches its theoretical maximum, indicating a perfectly uniform point distribution, such as one following a **hexagonal lattice pattern**.
 
@@ -139,8 +139,8 @@ $$
 
 Where:
 
-- \(𝑑̅ₒ = \frac{1}{n} \sum_{i=1}^{n} D_i\): the average observed nearest neighbor distance  
-- \(𝑑̅ₑ = \frac{0.5}{\sqrt{n / A}}\): the expected average nearest neighbor distance under complete spatial randomness, where \(n\) is the number of points and \(A\) is the area of the study region  
+- \(𝑑̅ₒ = \frac{1}{n} \sum_{i=1}^{n} D_i\): the average observed nearest neighbor distance
+- \(𝑑̅ₑ = \frac{0.5}{\sqrt{n / A}}\): the expected average nearest neighbor distance under complete spatial randomness, where \(n\) is the number of points and \(A\) is the area of the study region
 - \(SE = \frac{0.26136}{\sqrt{n^2 / A}}\): the standard error of \(𝑑̅ₒ\)
 
 This is a **two-tailed test**, since the alternative hypothesis considers both clustering and dispersion. A z-score of \(|1.96|\) corresponds to an α-value of 0.05. If \( z > 1.96 \), we reject \(H₀\) for \(Hₐ\), indicating **significant dispersion**, which is points are more spread out than expected under randomness; If \( z < -1.96 \), we also reject \(H₀\) for \(Hₐ\), but this time indicating **significant clustering**, which is points are more tightly packed than expected. If \( -1.96 \leq z \leq 1.96 \), we **fail to reject** \(H₀\), indicating that the observed point pattern is not significantly different from a random distribution.
@@ -175,11 +175,11 @@ $$
 K(d) = \frac{\frac{1}{n} \sum_{i=1}^{n} \#\left[S \in \text{Circle}(s_i, d)\right]}{\frac{n}{a}} = \frac{\text{Mean number of points in all circles of radius } d}{\text{Mean point density in entire study region } a}
 $$
 
-Where 
-- \( n \) is the total number of points in the dataset  
-- \( a \) is the area of the study region  
-- \( d \) is the search radius (distance threshold)  
-- \( S \) denotes the set of all points in the dataset  
+Where
+- \( n \) is the total number of points in the dataset
+- \( a \) is the area of the study region
+- \( d \) is the search radius (distance threshold)
+- \( S \) denotes the set of all points in the dataset
 - \( \text{Circle}(s_i, d) \) is the circle of radius \( d \) centered at point \( s_i \)
 
 Under a random spatial process (CSR), the expected value of the K-function is \(K(d) = \pi d^2\), which is simply the area of a circle with radius \(d\). If the observed value of \(K(d)\) is greater than \(\pi d^2\), it indicates clustering at scale \(d\). If the observed value is less than \(\pi d^2\), it indicates dispersion at that scale.
@@ -209,7 +209,7 @@ $$
 ### Beginning and Incremental Distances
 
 In K-function analysis, the first step is to define the initial distance \(d_0\), which represents the smallest distance for evaluating spatial relationships. The next step is to define a sequence of incremental distances, usually set at equal intervals (e.g., 10 meters, 20 meters, 50 meters). These incremental distances represent the various spatial scales at which clustering or dispersion might occur. **Beginning distance** is typically set to 0, representing the starting point of spatial interaction. **Incremental distance** determines how frequently the K-function is evaluated. Common choices for the **number of distance bands** are **10** or **20**, depending on the scale and resolution desired. In **R**, the `r` argument in the `spatstat` package allows us to specify a vector of distances at which the K-function should be evaluated. The manual advises against overriding the default unless there is a good reason, as “there is a sensible default.”
-In K-function analysis, it is important to define both the **beginning distance** and the **incremental distance** to evaluate spatial relationships across multiple scales. The **beginning distance** \( d_0 \) typically starts at 0, representing the minimum distance at which spatial interaction is measured. The **incremental distance** determines the step size between successive evaluations of the K-function, which is frequently used numbers like 10 or 20. These values define the range and resolution of the spatial analysis. Although we can specify a custom vector of distances in R, the manual advises against doing so unless there's a specific reason because **there is a sensible default**. 
+In K-function analysis, it is important to define both the **beginning distance** and the **incremental distance** to evaluate spatial relationships across multiple scales. The **beginning distance** \( d_0 \) typically starts at 0, representing the minimum distance at which spatial interaction is measured. The **incremental distance** determines the step size between successive evaluations of the K-function, which is frequently used numbers like 10 or 20. These values define the range and resolution of the spatial analysis. Although we can specify a custom vector of distances in R, the manual advises against doing so unless there's a specific reason because **there is a sensible default**.
 
 The **maximum distance** at which the K-functions should be evaluated can also be specifies in R, which should be approximately **one-half of the maximum pairwise distance** between points in your dataset. Rounding to a convenient value (e.g., 1400 or 1500 instead of 1437) is acceptable for clarity and consistency. Based on the maximum distance, The formula for calculating the **incremental distance** is:
 
@@ -334,7 +334,7 @@ cat("Maximum Distance:", max.distance, "\n")
 
 ### Ripley's K-function
 
-The plots below show the **Ripley's K-function**. The observed $K(d)$ in solid line and the theoretical $K(d)$ in dashed line under the null hypothesis of Complete Spatial Randomness (CSR). The observed $K(d)$ is significantly higher than the theoretical $K(d)$, beginning at 54 feet. This suggests that the points are more concentrated than expected under CSR, indicating clustering. Since the gap between the observed and theoretical $K(d)$ is increases with distance, we can coustering is more pronounced at larger distances. 
+The plots below show the **Ripley's K-function**. The observed $K(d)$ in solid line and the theoretical $K(d)$ in dashed line under the null hypothesis of Complete Spatial Randomness (CSR). The observed $K(d)$ is significantly higher than the theoretical $K(d)$, beginning at 54 feet. This suggests that the points are more concentrated than expected under CSR, indicating clustering. Since the gap between the observed and theoretical $K(d)$ is increases with distance, we can coustering is more pronounced at larger distances.
 
 ```{r, message=FALSE, warning=FALSE}
 khat <-Kest(market_pp, rmax=28000, correction="Ripley")
@@ -418,9 +418,9 @@ if (!is.na(first_below_index)) {
 
 ### Ripley's L-function
 
-Then. we proceed to plot the **Ripley's L-function**, as it linearizes the K-function for easier interpretation. As shown below, we see that the observed $L(r) - r$ values are always greater than 0. This indicates that the observed number of points within a distance $r$ is higher than what is expected under the null hypothesis of Complete Spatial Randomness (CSR). 
+Then. we proceed to plot the **Ripley's L-function**, as it linearizes the K-function for easier interpretation. As shown below, we see that the observed $L(r) - r$ values are always greater than 0. This indicates that the observed number of points within a distance $r$ is higher than what is expected under the null hypothesis of Complete Spatial Randomness (CSR).
 
-Since the magnitude of $L(r)- r$ reflects the degree of clustering with larger values suggest strong clustering, the plot implies that degree of clustering first increased and then decreased as distance increased. This suggests that farmers' markets in Philadelphia are clustered at smaller distances but outcome more dispersed at larger distances. 
+Since the magnitude of $L(r)- r$ reflects the degree of clustering with larger values suggest strong clustering, the plot implies that degree of clustering first increased and then decreased as distance increased. This suggests that farmers' markets in Philadelphia are clustered at smaller distances but outcome more dispersed at larger distances.
 
 ```{r}
 lhat <- Lest(market_pp, rmax=28000, correction="Ripley")
@@ -450,7 +450,7 @@ ggplot(lhat_df, aes(x = r)) +
 
 ### Ripley's L-function Confidence Envelopes
 
-The final plot shows **Ripley's L-function with Confidence Envelopes**. The observed $L(r) - r$ are consitently above the upper confidence envelope (shaded region) across all distances, indicating that the observed points are more clustered than expected under Complete Spatial Randomness (CSR). 
+The final plot shows **Ripley's L-function with Confidence Envelopes**. The observed $L(r) - r$ are consitently above the upper confidence envelope (shaded region) across all distances, indicating that the observed points are more clustered than expected under Complete Spatial Randomness (CSR).
 
 ```{r, message=FALSE, warning=FALSE}
 Lenv <- spatstat.explore::envelope(market_pp,fun="Lest", rmax=28000, nsim=9,nrank=1)
