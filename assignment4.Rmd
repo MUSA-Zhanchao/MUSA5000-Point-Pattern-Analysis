@@ -12,6 +12,11 @@ output:
     code_download: yes
     mathjax: default
 ---
+*Keywords: Nearest Neighbor Index (NNI), Ripley’s K-Function, Ripley’s L-Function, Spatial Clustering*
+
+GitHub Repository: [MUSA5000-Point-Pattern-Analysis](https://github.com/zyang91/MUSA5000-Point-Pattern-Analysis) \|
+[Website](https://zyang91.github.io/MUSA5000-Point-Pattern-Analysis/)
+
 ```{r load packages, message=FALSE, warning=FALSE, include=FALSE}
 
 options(scipen=999)
@@ -501,7 +506,7 @@ Without conducting the analyses, we suspect that the absence of farmers markets 
 
 # Discussion
 
-The results from both the Nearest Neighbor Analysis and K-function analysis consistently indicate that the spatial distribution of farmers markets in Philadelphia is significantly clustered. The Nearest Neighbor Index (NNI) is 0.778, with a z-score of -3.345 and a p-value of 0.0000002. These values provide strong statistical evidence to reject the null hypothesis of complete spatial randomness. The K-function analysis supports this conclusion by showing that the observed K(d) begins to exceed the theoretical K(d) at a distance of 54 feet. This divergence continues to increase with distance, indicating significant clustering across multiple spatial scales. 
+The results from both the Nearest Neighbor Analysis and K-function analysis consistently indicate that the spatial distribution of farmers markets in Philadelphia is significantly clustered. The Nearest Neighbor Index (NNI) is 0.778, with a z-score of -3.345 and a p-value of 0.0000002. These values provide strong statistical evidence to reject the null hypothesis of complete spatial randomness. The K-function analysis supports this conclusion by showing that the observed K(d) begins to exceed the theoretical K(d) at a distance of 54 feet. This divergence continues to increase with distance, indicating significant clustering across multiple spatial scales.
 
 These findings align with initial expectations based on the visual distribution of farmers markets. The point data showed that markets were concentrated in Center City and parts of West Philadelphia, while large areas such as the Northeast and South appeared underserved. Both methods confirmed these visual observations through statistically significant results. This consistency strengthens the reliability of the findings. At the same time, it is necessary to acknowledge the limitations of the methods used. Nearest Neighbor Analysis evaluates only the distance to the closest point and is highly sensitive to the shape of the study area. In a city with irregular boundaries such as Philadelphia, this can result in inaccurate estimates of expected spacing. K-function and L-function analyses offer a more detailed view by examining clustering across different distances. However, they rely on the assumption that points have an equal probability of occurring anywhere within the study area. This assumption is difficult to justify in a city where population density and land use vary significantly. Despite these limitations, the convergence of results across different methods provides strong evidence that the observed pattern is not random.
 
