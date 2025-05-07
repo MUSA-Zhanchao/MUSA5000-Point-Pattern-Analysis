@@ -501,6 +501,9 @@ Without conducting the analyses, we suspect that the absence of farmers markets 
 
 # Discussion
 
+The results from both the Nearest Neighbor Analysis and K-function analysis consistently indicate that the spatial distribution of farmers markets in Philadelphia is significantly clustered. The Nearest Neighbor Index (NNI) is 0.778, with a z-score of -3.345 and a p-value of 0.0000002. These values provide strong statistical evidence to reject the null hypothesis of complete spatial randomness. The K-function analysis supports this conclusion by showing that the observed K(d) begins to exceed the theoretical K(d) at a distance of 54 feet. This divergence continues to increase with distance, indicating significant clustering across multiple spatial scales. 
+
+These findings align with initial expectations based on the visual distribution of farmers markets. The point data showed that markets were concentrated in Center City and parts of West Philadelphia, while large areas such as the Northeast and South appeared underserved. Both methods confirmed these visual observations through statistically significant results. This consistency strengthens the reliability of the findings. At the same time, it is necessary to acknowledge the limitations of the methods used. Nearest Neighbor Analysis evaluates only the distance to the closest point and is highly sensitive to the shape of the study area. In a city with irregular boundaries such as Philadelphia, this can result in inaccurate estimates of expected spacing. K-function and L-function analyses offer a more detailed view by examining clustering across different distances. However, they rely on the assumption that points have an equal probability of occurring anywhere within the study area. This assumption is difficult to justify in a city where population density and land use vary significantly. Despite these limitations, the convergence of results across different methods provides strong evidence that the observed pattern is not random.
 
 ```{r}
 ggplot() +
@@ -519,3 +522,11 @@ ggplot() +
     labs(
     title = "Farmers Markets and Median Household Income by Zip Code")
 ```
+
+To examine whether this pattern reflects broader socioeconomic disparities, we compared the spatial distribution of farmers markets to median household income at the ZIP code level using the MedIncome variable from the 2000 census. The overlay shows that higher-income ZIP codes contain more markets, while many lower-income areas, particularly in North, Southwest, and South Philadelphia, have little or no market presence. Although this conclusion is based on visual analysis and not statistical testing, the association appears strong. The absence of farmers markets in lower-income areas suggests inequities in access to healthy food across the city.
+
+These findings support a clear conclusion. **Farmers markets in Philadelphia are spatially clustered**. This pattern is not the result of random placement. Markets are concentrated in central, higher-income neighborhoods, while peripheral and lower-income communities experience limited access. The conclusion is supported by statistical evidence, consistent across multiple methods, and reinforced by income overlay analysis.
+
+This evidence points to the need for targeted policy action. The City of Philadelphia and its partners should develop an equity-based plan to expand farmers market access in underserved neighborhoods. Priority areas include North, Southwest, and Northeast Philadelphia. New markets should be located based on data about household income, population density, and service gaps. Where permanent markets are not feasible, the city should invest in mobile markets and rotating pop-up locations to ensure reliable access. All market siting should be coordinated with public transit systems to support access for residents without cars. The city should also offer financial and logistical support to vendors willing to operate in high-need areas. These actions will promote food security, support neighborhood economies, and advance goals related to public health and spatial equity.
+
+---
