@@ -12,6 +12,11 @@ output:
     code_download: yes
     mathjax: default
 ---
+*Keywords: Nearest Neighbor Index (NNI), Ripley’s K-Function, Ripley’s L-Function, Spatial Clustering*
+
+GitHub Repository: [MUSA5000-Point-Pattern-Analysis](https://github.com/zyang91/MUSA5000-Point-Pattern-Analysis) \|
+[Website](https://zyang91.github.io/MUSA5000-Point-Pattern-Analysis/)
+
 ```{r load packages, message=FALSE, warning=FALSE, include=FALSE}
 
 options(scipen=999)
