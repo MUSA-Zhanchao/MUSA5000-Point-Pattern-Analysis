@@ -1,1 +1,1 @@
-# MUSA5000-Point-Pattern-Analysis
+# MUSA5000 Assignment4: Point Pattern Analysis
